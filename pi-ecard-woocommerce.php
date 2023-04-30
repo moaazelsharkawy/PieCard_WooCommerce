@@ -260,8 +260,38 @@ function piecard_init_gateway_class()
       $order->reduce_order_stock();
 
       // return redirect to complete page
-      wp_redirect($this->url . '/checkout/order-received/' . $_GET['id'] . '?key=' . $order->get_order_key());
-      exit;
+      
+      
+      echo '<div style="text-align:center">';
+echo '<img src="https://example.com/images/logo.png" alt="Logo">';
+echo '<p style="font-size: 18px; margin-top: 20px;">succesful payment</p>';
+echo '<p style="font-size: 16px;"><a href="' . $this->url . '/checkout/order-received/' . $_GET['id'] . '?key=' . $order->get_order_key() . '">' . $this->url . '/checkout/order-received/' . $_GET['id'] . '?key=' . $order->get_order_key() . '</a></p>';
+echo '<button style="background-color: #4CAF50; border: none; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 5px;" onclick="copyToClipboard(\'' . $this->url . '/checkout/order-received/' . $_GET['id'] . '?key=' . $order->get_order_key() . '\')">نسخ الرابط</button>';
+echo '</div>';
+
+// JavaScript function to copy URL to clipboard
+echo '<script>
+function copyToClipboard(url) {
+  var input = document.createElement("textarea");
+  document.body.appendChild(input);
+  input.value = url;
+  input.select();
+  document.execCommand("copy");
+  document.body.removeChild(input);
+  alert("the link is copied!");
+}
+
+// Check if JavaScript is enabled
+window.onload = function() {
+  var button = document.querySelector("button");
+  button.style.display = "none"; // hide the button if JavaScript is enabled
+};
+</script>';
+
+// exit script
+exit;
+
+      
 
     }
   }
