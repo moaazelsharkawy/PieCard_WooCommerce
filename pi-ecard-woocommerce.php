@@ -80,6 +80,7 @@ function piecard_init_gateway_class()
       // save the settings
       add_action('woocommerce_update_options_payment_gateways_' . $this->id, array($this, 'process_admin_options'));
 
+
       // register a webhook
       add_action('woocommerce_api_complete', array($this, 'webhook'));
 
@@ -89,49 +90,50 @@ function piecard_init_gateway_class()
      * Plugin options
      */
     public function init_form_fields()
-    {
+{
+  $this->form_fields = array(
+    'enabled' => array(
+      'title' => 'Enable/Disable',
+      'label' => 'Enable Gateway',
+      'type' => 'checkbox',
+      'description' => '',
+      'default' => 'no'
+    ),
+    'testmode' => array(
+      'title' => 'Sandbox mode',
+      'label' => 'Enable Sandbox Mode',
+      'type' => 'checkbox',
+      'description' => 'Place the payment gateway in test mode.',
+      'default' => 'yes',
+      'desc_tip' => true,
+    ),
+    'url' => array(
+      'title' => 'URL',
+      'type' => 'text',
+      'description' => 'The URL of your live site. Note this must start with https:// and be correct for this plugin to work. Do not include trailing slash (/).',
+    ),
+    'name' => array(
+      'title' => 'Store Name',
+      'type' => 'text',
+      'description' => 'The name of your store as you would like it to appear on the payment page. This is required',
+    ),
+    'publishable_key' => array(
+      'title' => 'Public Key',
+      'type' => 'text'
+    ),
+    'private_key' => array(
+      'title' => 'Private Key',
+      'type' => 'password'
+    ),
+    'access_token' => array(
+      'title' => 'Access Token',
+      'type' => 'password'
+    ),
+   
+    
+  );
+}
 
-      $this->form_fields = array(
-        'enabled' => array(
-          'title' => 'Enable/Disable',
-          'label' => 'Enable Gateway',
-          'type' => 'checkbox',
-          'description' => '',
-          'default' => 'no'
-        ),
-        'testmode' => array(
-          'title' => 'Sandbox mode',
-          'label' => 'Enable Sandbox Mode',
-          'type' => 'checkbox',
-          'description' => 'Place the payment gateway in test mode.',
-          'default' => 'yes',
-          'desc_tip' => true,
-        ),
-        'url' => array(
-          'title' => 'URL',
-          'type' => 'text',
-          'description' => 'The URL of your live site. Note this must start with https:// and be correct for this plugin to work. Do not include trailing slash (/).',
-        ),
-        'name' => array(
-          'title' => 'Store Name',
-          'type' => 'text',
-          'description' => 'The name of your store as you would like it to appear on the payment page. This is required',
-        ),
-        'publishable_key' => array(
-          'title' => 'Public Key',
-          'type' => 'text'
-        ),
-        'private_key' => array(
-          'title' => 'Private Key',
-          'type' => 'password'
-        ),
-        'access_token' => array(
-          'title' => 'Access Token',
-          'type' => 'password'
-        ),
-      );
-
-    }
 
     /*
      * Create payment on Pi eCard servers and redirect to payment page
@@ -150,9 +152,11 @@ function piecard_init_gateway_class()
         'metadata' => [
           'orderId' => $order_id,
         ],
-        'sandbox' => true,
+        'sandbox' => $this->testmode,
         'successURL' => $this->url . '/wc-api/complete?id=' . $order_id,
         'cancelURL' => $this->url . '/checkout'
+
+
       ];
 
       // Headers
@@ -259,36 +263,61 @@ function piecard_init_gateway_class()
       $order->payment_complete();
       $order->reduce_order_stock();
 
-      // return redirect to complete page
-      
-      
-      echo '<div style="text-align:center">';
-echo '<img src="https://example.com/images/logo.png" alt="Logo">';
-echo '<p style="font-size: 18px; margin-top: 20px;">succesful payment</p>';
-echo '<p style="font-size: 16px;"><a href="' . $this->url . '/checkout/order-received/' . $_GET['id'] . '?key=' . $order->get_order_key() . '">' . $this->url . '/checkout/order-received/' . $_GET['id'] . '?key=' . $order->get_order_key() . '</a></p>';
-echo '<button style="background-color: #4CAF50; border: none; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 4px 2px; cursor: pointer; border-radius: 5px;" onclick="copyToClipboard(\'' . $this->url . '/checkout/order-received/' . $_GET['id'] . '?key=' . $order->get_order_key() . '\')">نسخ الرابط</button>';
-echo '</div>';
+   // return redirect to complete page
 
-// JavaScript function to copy URL to clipboard
-echo '<script>
-function copyToClipboard(url) {
-  var input = document.createElement("textarea");
-  document.body.appendChild(input);
-  input.value = url;
-  input.select();
-  document.execCommand("copy");
-  document.body.removeChild(input);
-  alert("the link is copied!");
+echo '<div style="text-align:center;">
+      <img src="https://b.top4top.io/p_2683jqh4i1.png" alt="Logo" style="max-width: 90%; height: 200; width: 300px;">
+      <p style="font-size: 18px; margin-top: 20px;">تم الدفع بنجاح.</p>
+      <button style="background-color: #4CAF50; border: none; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 22px; margin: 4px 2px; cursor: pointer; border-radius: 5px; width: 50%;" onclick="window.open(\'' . $this->url . '/checkout/order-received/' . $_GET['id'] . '?key=' . $order->get_order_key() . '\', \'_blank\')">فتح ملخص الطلب</button>
+      </div>';
+
+// CSS for mobile devices
+echo '<style>
+@media (max-width: 480px) {
+img {
+width: 80%;
+}
+p {
+font-size: 20px;
+}
+button {
+font-size: 20px;
+padding: 8px 16px;
+}
 }
 
-// Check if JavaScript is enabled
-window.onload = function() {
-  var button = document.querySelector("button");
-  button.style.display = "none"; // hide the button if JavaScript is enabled
-};
-</script>';
+/* viewport for mobile devices */
+@media (max-width: 480px) {
+/* set initial zoom level to 150% */
+meta[name=viewport] {
+width: device-width;
+initial-scale: 10;
+minimum-scale: 10;
+maximum-scale: 10;
+user-scalable: no;
+}
+div {
+width: 100%;
+margin: 0;
+padding: 0;
+}
+img {
+width: 80%;
+margin: 20px auto;
+}
+p {
+font-size: 20px;
+margin-top: 20px;
+margin-bottom: 20px;
+}
+button {
+font-size: 20px;
+padding: 8px 16px;
+}
+}
+</style>';
 
-// exit script
+
 exit;
 
       
