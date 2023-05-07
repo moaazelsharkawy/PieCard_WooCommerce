@@ -265,58 +265,27 @@ function piecard_init_gateway_class()
 
    // return redirect to complete page
 
-echo '<div style="text-align:center;">
-      <img src="https://b.top4top.io/p_2683jqh4i1.png" alt="Logo" style="max-width: 90%; height: 200; width: 300px;">
-      <p style="font-size: 18px; margin-top: 20px;">تم الدفع بنجاح.</p>
-      <button style="background-color: #4CAF50; border: none; color: white; padding: 10px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 22px; margin: 4px 2px; cursor: pointer; border-radius: 5px; width: 50%;" onclick="window.open(\'' . $this->url . '/checkout/order-received/' . $_GET['id'] . '?key=' . $order->get_order_key() . '\', \'_blank\')">فتح ملخص الطلب</button>
+echo '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #f5f5f5;">
+        <img src="#" alt="Logo" style="width: 100vw; height: 50vh; object-fit: contain;">
+        <p style="font-size: 40px; margin-top: 20px;">✔️#</p>
+        <button style="background-color: #273647; border: none; color: white; padding: 15px 30px; text-align: center; text-decoration: none; display: inline-block; font-size: 36px; margin: 4px 2px; cursor: pointer; border-radius: 5px; width: 50%;" onclick="window.open(\'' . $this->url . '/checkout/order-received/' . $_GET['id'] . '?key=' . $order->get_order_key() . '\', \'_blank\')">example  </button>
       </div>';
 
 // CSS for mobile devices
 echo '<style>
-@media (max-width: 480px) {
-img {
-width: 80%;
-}
-p {
-font-size: 20px;
-}
-button {
-font-size: 20px;
-padding: 8px 16px;
-}
-}
-
-/* viewport for mobile devices */
-@media (max-width: 480px) {
-/* set initial zoom level to 150% */
-meta[name=viewport] {
-width: device-width;
-initial-scale: 10;
-minimum-scale: 10;
-maximum-scale: 10;
-user-scalable: no;
-}
-div {
-width: 100%;
-margin: 0;
-padding: 0;
-}
-img {
-width: 80%;
-margin: 20px auto;
-}
-p {
-font-size: 20px;
-margin-top: 20px;
-margin-bottom: 20px;
-}
-button {
-font-size: 20px;
-padding: 8px 16px;
-}
-}
+    @media (max-width: 480px) {
+        p {
+            font-size: 40px;
+        }
+        button {
+            font-size: 40px;
+            padding: 10px 20px;
+        }
+        img {
+            height: 40vh;
+        }
+    }
 </style>';
-
 
 exit;
 
