@@ -88,10 +88,12 @@ function piecard_init_gateway_class()
 }
 
 public function display_payment_message() {
-    echo '<div class="payment-message">example notes for pioneer</div>';
+    $message = $this->get_option('payment_message');
+    echo '<div class="payment-message">' . $message . '</div>';
     echo '<div style="margin-bottom: 10px;"></div>';
     echo '<style>.payment-message { color: darkred; }</style>';
 }
+
 
     }
 
@@ -139,6 +141,13 @@ public function display_payment_message() {
       'type' => 'password'
     ),
    
+    
+    'payment_message' => array(
+            'title' => 'Payment Message',
+            'type' => 'textarea',
+            'description' => 'The message to display in the payment gateway',
+            'default' => 'Example notes'
+        ),
     
   );
 }
