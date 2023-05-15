@@ -83,6 +83,15 @@ function piecard_init_gateway_class()
 
       // register a webhook
       add_action('woocommerce_api_complete', array($this, 'webhook'));
+// add action to display payment message in payment gateway
+    add_action('woocommerce_review_order_before_submit', array($this, 'display_payment_message'));
+}
+
+public function display_payment_message() {
+    echo '<div class="payment-message">example notes for pioneer</div>';
+    echo '<div style="margin-bottom: 10px;"></div>';
+    echo '<style>.payment-message { color: darkred; }</style>';
+}
 
     }
 
