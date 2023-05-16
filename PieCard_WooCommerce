@@ -164,6 +164,9 @@ public function display_payment_message() {
       global $woocommerce;
 
       $order = wc_get_order($order_id);
+      
+// Empty the cart to cancel any existing orders
+  wc_empty_cart();
 
       // Data to be sent
       $data = [
@@ -174,7 +177,7 @@ public function display_payment_message() {
         ],
         'sandbox' => $this->testmode,
         'successURL' => $this->url . '/wc-api/complete?id=' . $order_id,
-        'cancelURL' => $this->url . '/checkout'
+        'cancelURL' => $this->url . '/cart' // Change the URL to the cart page instead of the payment page
       ];
 
       // Headers
