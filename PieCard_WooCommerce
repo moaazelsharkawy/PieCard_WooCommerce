@@ -154,74 +154,80 @@ public function display_payment_message() {
 /*
  * Create payment on Pi eCard servers and redirect to payment page
  */
-  public function process_payment($order_id)
-    {
+  /*
+ * Create payment on Pi eCard servers and redirect to payment page
+ */
+public function process_payment($order_id)
+{
+  global $woocommerce;
 
-      global $woocommerce;
+  $order = wc_get_order($order_id);
 
-      $order = wc_get_order($order_id);
+  // Empty the cart to cancel any existing orders
+  wc_empty_cart();
 
-      // Data to be sent
-      $data = [
-        'amount' => doubleval($order->get_total()),
-        'memo' => $this->name . ' Order #' . $order_id,  // IMPORTANT: DO NOT CHANGE THIS! This is used to identify the payment on your Pi eCard account
-        'metadata' => [
-          'orderId' => $order_id,
-        ],
-        'sandbox' => $this->testmode,
-        'successURL' => $this->url . '/wc-api/complete?id=' . $order_id,
-        'cancelURL' => $this->url . '/checkout'
-      ];
+  // Data to be sent
+  $data = [
+    'amount' => doubleval($order->get_total()),
+    'memo' => $this->name . ' Order #' . $order_id,  // IMPORTANT: DO NOT CHANGE THIS! This is used to identify the payment on your Pi eCard account
+    'metadata' => [
+      'orderId' => $order_id,
+    ],
+    'sandbox' => $this->testmode,
+    'successURL' => $this->url . '/wc-api/complete?id=' . $order_id,
+    'cancelURL' => $this->url . '/cart' // Change the URL to the cart page instead of the payment page
+  ];
 
-      // Headers
-      $headers = [
-        'clientid: ' . $this->publishable_key,
-        'clientsecret: ' . $this->private_key,
-        'accesstoken: ' . $this->access_token,
-      ];
+  // Headers
+  $headers = [
+    'clientid: ' . $this->publishable_key,
+    'clientsecret: ' . $this->private_key,
+    'accesstoken: ' . $this->access_token,
+  ];
 
-      // Make the request
-      $curl = curl_init();
+  // Make the request
+  $curl = curl_init();
 
-      curl_setopt_array(
-        $curl,
-        array(
-          CURLOPT_URL => "https://api.piecard.app/payment",
-          CURLOPT_RETURNTRANSFER => true,
-          CURLOPT_ENCODING => "",
-          CURLOPT_MAXREDIRS => 10,
-          CURLOPT_TIMEOUT => 0,
-          CURLOPT_FOLLOWLOCATION => true,
-          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-          CURLOPT_CUSTOMREQUEST => "POST",
-          CURLOPT_POSTFIELDS => json_encode($data),
-          CURLOPT_HTTPHEADER => array_merge(array("Content-Type: application/json"), $headers)
-        )
-      );
+  curl_setopt_array(
+    $curl,
+    array(
+      CURLOPT_URL => "https://api.piecard.app/payment",
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_ENCODING => "",
+      CURLOPT_MAXREDIRS => 10,
+      CURLOPT_TIMEOUT => 0,
+      CURLOPT_FOLLOWLOCATION => true,
+      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      CURLOPT_CUSTOMREQUEST => "POST",
+      CURLOPT_POSTFIELDS => json_encode($data),
+      CURLOPT_HTTPHEADER => array_merge(array("Content-Type: application/json"), $headers)
+    )
+  );
 
-      $response = curl_exec($curl);
+  $response = curl_exec($curl);
 
-      curl_close($curl);
+  curl_close($curl);
 
-      // Check the response
-      $responseData = json_decode($response, true);
+  // Check the response
+  $responseData = json_decode($response, true);
 
-      if ($responseData['success'] == true) {
-        // Create the redirect URL
-        $url = 'https://piecard.app/pay/' . $responseData['data']['id'];
+  if ($responseData['success'] == true) {
+    // Create the redirect URL
+    $url = 'https://piecard.app/pay/' . $responseData['data']['id'];
 
-        return array(
-          'result' => 'success',
-          'redirect' => $url
-        );
-      } else {
-        echo $responseData['data']['message'] ?? 'fail';
-        return array(
-          'result' => 'failed',
-          'redirect' => false
-        );
-      }
-    }
+    return array(
+      'result' => 'success',
+      'redirect' => $url
+    );
+  } else {
+    echo $responseData['data']['message'] ?? 'fail';
+    return array(
+      'result' => 'failed',
+      'redirect' => false
+    );
+  }
+}
+
 
     /*
      * Webhook for complete payment
