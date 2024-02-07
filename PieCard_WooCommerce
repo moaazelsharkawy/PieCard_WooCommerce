@@ -1,6 +1,6 @@
 <?php
 /*
- * Plugin Name: Pi payment for WooCommerce
+ * Plugin Name: Pi ecard for pi payment for WooCommerce
  * Description: Take Pi eCard payments on your store.
  * Author:  Decent App & salla modify
  * Author URI: 
@@ -34,8 +34,8 @@ function add_my_currency_symbol($currency_symbol, $currency)
 {
     switch ($currency) {
         case 'Pi':
-            $currency_symbol = 'π';
-            break;
+            $currency_symbol = 'π'; 
+break;
     }
     return $currency_symbol;
 }
@@ -109,7 +109,7 @@ function piecard_init_gateway_class()
                     'title' => 'Sandbox mode',
                     'label' => 'Enable Sandbox Mode',
                     'type' => 'checkbox',
-                    'description' => 'Place the payment gateway in test mode.',
+                    'description' => 'Place the payment gateway in test mode only.',
                     'default' => 'yes',
                     'desc_tip' => true,
                 ),
@@ -153,7 +153,7 @@ function piecard_init_gateway_class()
 
             $order = wc_get_order($order_id);
 
-            // إلغاء جميع الطلبات الموجودة في سلة التسوق
+            //  empty cart after successful order  
             wc_empty_cart();
 
             // Data to be sent
@@ -272,7 +272,7 @@ function piecard_init_gateway_class()
             $order->payment_complete();
             $order->reduce_order_stock();
 
-            // return redirect to complete page
+            // return redirect to complete page without blocked from pi browser
 
             // JavaScript code
             echo '<script>window.location.href = " your thanks page ex: https://salla-shop.com/thanks/";</script>';
